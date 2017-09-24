@@ -2,17 +2,46 @@
  * Created by admin on 2017/9/22.
  */
 define(['jquery','template'],function($,template){
-    //µ÷ÓÃ½Ó¿Ú»ñÈ¡ËùÓĞµÄ½²Ê¦Êı¾İ
+    //è°ƒç”¨æ¥å£è·å–æ‰€æœ‰çš„è®²å¸ˆæ•°æ®
 
     $.ajax({
         type:'get',
         url:'/api/teacher',
         dataType:'json',
         success:function(data){
-            console.log(data);
-        //    ½âÎöÊı¾İ£¬äÖÈ¾Ò³Ãæ
+           // console.log(data);
+        //    è§£ææ•°æ®ï¼Œæ¸²æŸ“é¡µé¢
             var html=template('teacherTpl',{list:data.result});
             $('#teacherInfo').html(html);
+
+        //å¯ç”¨å’Œæ³¨é”€ç®¡ç†åŠŸèƒ½
+            $('.eod').click(function(){
+                var that=this
+                //console.log(123)
+                var td=$(this).closest('td')
+                var tcId=td.attr('data-tcId');
+                var status=td.attr('data-status');
+                //console.log(tcId,status)
+                $.ajax({
+                    type:'post',
+                    url:'/api/teacher/handle',
+                    data:{tc_id:tcId,tc_status:status},
+                    dataType:'json',
+                    success:function(data){
+                        //console.log(data)
+                        if(data.code==200){
+                          td.attr('data-status',data.result.tc_status)
+                            if(data.result.tc_status==0){
+                                $(that).text('æ³¨é”€')
+                            }else{
+                                $(that).text('å¯ç”¨')
+                            }
+                        }
+
+                    }
+                })
+
+            })
 
 
         }
